@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ENTRY MASTER - 트레이딩 체크리스트</title>
+    
+    <!-- 모바일 PWA 설정: 홈 화면 추가 시 앱처럼 동작 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome: 아이콘이 안 나올 경우를 대비해 표준 CDN 사용 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* 폰트 및 기본 스타일 */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+        
+        body {
+            background-color: #0f1715; /* 매우 어두운 초록빛 검정색 */
+            color: #e2e8f0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .card {
+            background-color: rgba(30, 41, 37, 0.7);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card.active {
+            border-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .score-text {
+            color: #10b981;
+            font-size: 4rem;
+            font-weight: 800;
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background-color: #1f2937;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #059669, #10b981);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .check-circle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #374151;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .card.active .check-circle {
+            background-color: #10b981;
+            border-color: #10b981;
+        }
+        
+        /* 모바일 터치 피드백 */
+        .card:active {
+            transform: scale(0.97);
+        }
+
+        /* 스크롤바 숨기기 */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center min-h-screen p-4 md:p-8">
+
+    <div class="w-full max-w-2xl">
+        <!-- 헤더 -->
+        <header class="flex justify-between items-center mb-8 pt-2">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-bolt text-emerald-400"></i>
+                <h1 class="text-xl font-bold tracking-widest text-emerald-400 uppercase">Entry Master</h1>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="resetAll()" class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-800 text-gray-400 hover:text-white transition">
+                    <i class="fas fa-redo-alt text-sm"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 점수 섹션 -->
+        <div class="mb-10 flex flex-col md:flex-row items-center gap-8 px-4 bg-emerald-900/10 p-6 rounded-2xl border border-emerald-500/10">
+            <div class="text-center">
+                <p class="text-[10px] tracking-widest text-gray-500 mb-1 font-bold">CONFIDENCE SCORE</p>
+                <div class="flex items-baseline justify-center">
+                    <span id="score" class="score-text">0</span>
+                    <span class="text-2xl text-gray-600 font-bold ml-1">/6</span>
+                </div>
+            </div>
+            
+            <div class="flex-1 w-full">
+                <div class="flex justify-between items-center mb-2">
+                    <p id="status-text" class="text-sm font-bold text-gray-400 italic">원칙을 체크해 주세요</p>
+                </div>
+                <div class="progress-bar">
+                    <div id="progress" class="progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 체크리스트 항목들 -->
+        <div id="checklist" class="space-y-3">
+            <!-- 항목 1 -->
+            <div class="card p-5 rounded-xl cursor-pointer flex items-center justify-between" onclick="toggleItem(this)">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-xl w-8 text-center bg-emerald-400/10 h-10 w-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-100 uppercase text-sm tracking-tight">비트방향</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">비트코인 방향성 일치 확인</p>
+                    </div>
+                </div>
+                <div class="check-circle">
+                    <i class="fas fa-check text-[10px] text-black opacity-0"></i>
+                </div>
+            </div>
+
+            <!-- 항목 2 -->
+            <div class="card p-5 rounded-xl cursor-pointer flex items-center justify-between" onclick="toggleItem(this)">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-xl w-8 text-center bg-emerald-400/10 h-10 w-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-random"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-100 uppercase text-sm tracking-tight">추세</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">시장 추세 일치 확인</p>
+                    </div>
+                </div>
+                <div class="check-circle">
+                    <i class="fas fa-check text-[10px] text-black opacity-0"></i>
+                </div>
+            </div>
+
+            <!-- 항목 3 -->
+            <div class="card p-5 rounded-xl cursor-pointer flex items-center justify-between" onclick="toggleItem(this)">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-xl w-8 text-center bg-emerald-400/10 h-10 w-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-angle-double-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-100 uppercase text-sm tracking-tight">고야기울기</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">고야라인 기울기 방향 확인</p>
+                    </div>
+                </div>
+                <div class="check-circle">
+                    <i class="fas fa-check text-[10px] text-black opacity-0"></i>
+                </div>
+            </div>
+
+            <!-- 항목 4 -->
+            <div class="card p-5 rounded-xl cursor-pointer flex items-center justify-between" onclick="toggleItem(this)">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-xl w-8 text-center bg-emerald-400/10 h-10 w-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-100 uppercase text-sm tracking-tight font-mono text-[13px]">LL고야위 / SS고야아래</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">시그널 고야 위치 확인</p>
+                    </div>
+                </div>
+                <div class="check-circle">
+                    <i class="fas fa-check text-[10px] text-black opacity-0"></i>
+                </div>
+            </div>
+
+            <!-- 항목 5 -->
+            <div class="card p-5 rounded-xl cursor-pointer flex items-center justify-between" onclick="toggleItem(this)">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-xl w-8 text-center bg-emerald-400/10 h-10 w-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-equals"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-100 uppercase text-sm tracking-tight">동일시그널</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">지표 시그널 일치 확인</p>
+                    </div>
+                </div>
+                <div class="check-circle">
+                    <i class="fas fa-check text-[10px] text-black opacity-0"></i>
+                </div>
+            </div>
+
+            <!-- 항목 6 -->
+            <div class="card p-5 rounded-xl cursor-pointer flex items-center justify-between" onclick="toggleItem(this)">
+                <div class="flex items-center gap-4">
+                    <div class="text-emerald-400 text-xl w-8 text-center bg-emerald-400/10 h-10 w-10 flex items-center justify-center rounded-lg">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-100 uppercase text-sm tracking-tight">장애물 체크</h3>
+                        <p class="text-[11px] text-gray-500 mt-0.5">매물대 / 저항선 확인</p>
+                    </div>
+                </div>
+                <div class="check-circle">
+                    <i class="fas fa-check text-[10px] text-black opacity-0"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- 하단 상태 -->
+        <footer class="mt-12 mb-8 flex flex-col items-center gap-2 text-[10px] text-gray-600 font-bold tracking-widest uppercase">
+            <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                System Monitoring Active
+            </div>
+            <div class="font-mono opacity-50 font-normal">v1.1.0-stable</div>
+        </footer>
+    </div>
+
+    <script>
+        function toggleItem(element) {
+            element.classList.toggle('active');
+            const checkIcon = element.querySelector('.fa-check');
+            if (element.classList.contains('active')) {
+                checkIcon.style.opacity = '1';
+                // 스마트폰 진동 피드백 (지원 기기만)
+                if (window.navigator.vibrate) window.navigator.vibrate(10);
+            } else {
+                checkIcon.style.opacity = '0';
+            }
+            updateScore();
+        }
+
+        function updateScore() {
+            const totalItems = 6;
+            const activeItems = document.querySelectorAll('.card.active').length;
+            const scoreElement = document.getElementById('score');
+            const progressElement = document.getElementById('progress');
+            const statusText = document.getElementById('status-text');
+
+            scoreElement.innerText = activeItems;
+            const percentage = (activeItems / totalItems) * 100;
+            progressElement.style.width = percentage + '%';
+
+            if (activeItems === 0) {
+                statusText.innerText = "원칙을 체크해 주세요";
+                statusText.style.color = "#9ca3af";
+            } else if (activeItems < 4) {
+                statusText.innerText = "진입 대기: 근거가 부족합니다";
+                statusText.style.color = "#fbbf24";
+            } else if (activeItems < 6) {
+                statusText.innerText = "진입 고려: 조건이 갖춰지고 있습니다";
+                statusText.style.color = "#34d399";
+            } else {
+                statusText.innerText = "강력 진입 추천! 모든 조건 일치";
+                statusText.style.color = "#10b981";
+            }
+        }
+
+        function resetAll() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.remove('active');
+                card.querySelector('.fa-check').style.opacity = '0';
+            });
+            updateScore();
+        }
+    </script>
+</body>
+</html>
